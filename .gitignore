@@ -1,4 +1,6 @@
-# Logs
+# =============================
+# Logs de execução e depuração
+# =============================
 logs
 *.log
 npm-debug.log*
@@ -7,22 +9,52 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Dependências
-node_modules/
+# =============================
+# Diretórios e arquivos de dependências
+# =============================
+# Dependências do projeto (não versionar)
+node_modules/ 
+# Pasta gerada após build de produção         
+build/                 
 
-# Build output
-build/
+# =============================
+# Arquivos de ambiente
+# =============================
+# Variáveis de ambiente (API keys, URLs, senhas, etc.)
+.env                   
 
-# Editor directories and files
-.vscode/*
+# =============================
+# Configurações do editor VS Code
+# =============================
+# Configurações locais do VS Code
+.vscode/*              
+# Exceção para compartilhar lista de extensões recomendadas
 !.vscode/extensions.json
-.idea/
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
 
-# Variáveis de ambiente
-.env
+# =============================
+# Outros arquivos de IDEs e SO
+# =============================
+# Config do IntelliJ / WebStorm
+.idea/    
+# Arquivo do macOS             
+.DS_Store    
+# Arquivos temporários do Visual Studio          
+*.suo     
+# Arquivos temporários do Node.js Tools for Visual Studio             
+*.ntvs*    
+# Arquivos do projeto Node.js para Visual Studio            
+*.njsproj  
+# Arquivos de solução do Visual Studio            
+*.sln 
+# Arquivos swap do Vim                 
+*.sw?                 
+
+# =============================
+# Outros arquivos temporários
+# =============================
+# Se usar dist para saída de build alternativa
+dist/     
+# Pasta gerada para server-side rendering (caso use)             
+dist-ssr/     
+# Arquivos locais com configurações pessoais         
+*.local                
