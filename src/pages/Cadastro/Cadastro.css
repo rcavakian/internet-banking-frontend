@@ -1,0 +1,139 @@
+.cadastro-page-wrapper {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Coluna da Esquerda (Branding) */
+.cadastro-branding {
+    flex: 1;
+    background-color: #fdf5e6; /* Cor 'pelo' */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.branding-image {
+    max-width: 300px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.branding-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #4a2c0f;
+    margin: 10px 0;
+}
+
+.branding-subtitle {
+    font-size: 1.2rem;
+    color: #7a5c4f;
+    margin: 0;
+}
+
+/* Coluna da Direita (Formulário) */
+.cadastro-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fdf5e6;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.cadastro-form {
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.cadastro-form h2 {
+    margin-bottom: 24px;
+    color: #333;
+}
+
+/* Grupos de input, botão e links */
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+.input-group input,
+.input-group .IMaskInput {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.cadastro-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ca8518;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.cadastro-button:hover {
+    background-color: #b77a19;
+}
+
+.login-link {
+    margin-top: 20px;
+}
+
+.login-link a {
+    color: #ca8518;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.error-message {
+    color: #D8000C;
+    background-color: #FFD2D2;
+    border: 1px solid #D8000C;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Media query para responsividade */
+@media (max-width: 768px) {
+    .cadastro-page-wrapper {
+        flex-direction: column;
+    }
+    .cadastro-branding, .cadastro-container {
+        flex: none;
+        padding: 40px, 20px; 
+    }
+    .cadastro-branding {
+        padding: 40px 20px;
+    }
+
+    .cadastro-title {
+        font-size: 2rem;
+    }
+}

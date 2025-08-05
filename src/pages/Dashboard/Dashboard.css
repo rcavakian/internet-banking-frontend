@@ -1,0 +1,187 @@
+/* src/pages/Dashboard/Dashboard.css
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.logout-button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    color: white;
+    background-color: #dc3545;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+} */
+
+/* src/pages/Dashboard/Dashboard.css */
+
+.dashboard-page {
+    background-color: #fdf5e6; /* Fundo 'pelo de caramelo' para a página toda */
+    min-height: 100vh;
+}
+
+/* 1. Estilos do Navbar Superior */
+.dashboard-navbar {
+    background-color: #4a2c0f; /* Marrom escuro, cor de café */
+    color: white;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.logout-button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    color: #4a2c0f;
+    background-color: #fdf5e6;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.logout-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Conteúdo Principal */
+.dashboard-main-content {
+    padding: 40px;
+}
+
+/* 2. Estilos da Seção de Boas-Vindas */
+.welcome-hero {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.welcome-text h2 {
+    margin: 0 0 10px 0;
+    font-size: 2.2rem;
+    color: #333;
+}
+
+.welcome-text p {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.hero-mascot {
+    max-width: 180px;
+    height: auto;
+}
+
+/* 3. Estilos da Área de Cards */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.card h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Card de Saldo */
+.balance-card .balance-amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ca8518; /* Cor principal de caramelo */
+    margin: 0;
+}
+
+/* Card de Ações */
+.actions-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.action-button, .statement-link {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    border-radius: 5px;
+    background-color: #ca8518;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.action-button:hover, .statement-link:hover {
+    background-color: #b77a19;
+}
+
+/* Card de Extrato */
+.statement-card p {
+    margin-bottom: 25px;
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 768px) {
+    .welcome-hero {
+        flex-direction: column;
+        text-align: center;
+    }
+    .hero-mascot {
+        margin-top: 20px;
+        max-width: 150px;
+    }
+    .dashboard-main-content {
+        padding: 20px;
+    }
+}

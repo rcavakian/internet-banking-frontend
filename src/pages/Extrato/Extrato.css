@@ -1,0 +1,53 @@
+/* Exemplo para o Extrato.css */
+@import '../OperationPage.css';
+
+.statement-page .operation-card {
+    max-width: 900px; /* Aumentamos de 500px para 900px, ajuste como preferir */
+}
+
+.statement-list {
+    margin-top: 30px;
+    width: 100%;
+}
+
+.statement-list table {
+    width: 100%;
+    border-collapse: collapse; /* Essencial para as bordas funcionarem bem */
+    text-align: left;
+}
+
+.statement-list th {
+    font-weight: 600;
+    color: #555;
+    padding-bottom: 15px;
+}
+
+.statement-list td {
+    padding: 18px 0; /* Aumenta o espaçamento vertical entre as linhas */
+    color: #333;
+}
+
+/* 2. AQUI ESTÁ A MÁGICA: A linha separadora */
+.statement-list tbody tr {
+    border-bottom: 1px solid #eeeeee; /* Linha cinza clara */
+}
+
+/* Remove a borda do último item para um acabamento limpo */
+.statement-list tbody tr:last-child {
+    border-bottom: none;
+}
+
+/* Estilo para a coluna de valor (cores) */
+.statement-list .valor {
+    font-weight: bold;
+    text-align: right;
+}
+
+.op-type-deposito .valor {
+    color: #28a745; /* Verde para depósitos */
+}
+
+.op-type-saque .valor,
+.op-type-pagamento .valor {
+    color: #dc3545; /* Vermelho para saques e pagamentos */
+}
