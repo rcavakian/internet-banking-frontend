@@ -103,6 +103,39 @@
     color: #666;
 }
 
+/* Informações da conta */
+.account-info {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #ca8518;
+}
+
+.account-details {
+    display: flex;
+    gap: 80px;
+    margin-bottom: 8px;
+}
+
+.account-numbers {
+    display: flex;
+    gap: 80px;
+}
+
+.account-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.account-number {
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+}
+
 .hero-mascot {
     max-width: 180px;
     height: auto;
@@ -183,5 +216,23 @@
     }
     .dashboard-main-content {
         padding: 20px;
+    }
+    .account-details, .account-numbers {
+        gap: 40px;
+    }
+    .account-info {
+        margin-top: 15px;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-details, .account-numbers {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+    .account-details {
+        margin-bottom: 5px;
     }
 }

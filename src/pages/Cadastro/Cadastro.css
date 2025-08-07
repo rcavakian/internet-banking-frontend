@@ -120,6 +120,16 @@
     text-align: center;
 }
 
+.success-message {
+    color: #4F8A10;
+    background-color: #DFF2BF;
+    border: 1px solid #4F8A10;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
 /* Media query para responsividade */
 @media (max-width: 768px) {
     .cadastro-page-wrapper {

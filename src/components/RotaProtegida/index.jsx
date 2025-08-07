@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom';
 
 export default function RotaProtegida({ children }) {
 
-    const token = localStorage.getItem("user_token");
+    const token = localStorage.getItem("token");
 
     if (!token) {
         return <Navigate to="/login" />

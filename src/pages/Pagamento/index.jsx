@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth, useUserAccounts } from '../../hooks/useAuth';
+import api from '../../services/api';
 import '../OperationPage.css';
 import ConfirmationModal from '../../components/ConfirmationModal';
 
@@ -8,14 +10,15 @@ export default function Pagamento() {
     const [descricao, setDescricao] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
+    const { logout } = useAuth();
+    const { accounts, refetch } = useUserAccounts();
 
     const handleLogout = () => {
-        localStorage.removeItem("user_token");
+        logout();
         navigate("/login")
     };
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -35,15 +38,37 @@ export default function Pagamento() {
     };
 
     const handleConfirmPagamento = async () => {
-        setIsModalOpen(false); // Fecha o modal
+        setIsModalOpen(false);
 
         try {
-            // await api.post('/operacoes/deposito', { valor });
+            if (accounts.length === 0) {
+                setError('Nenhuma conta encontrada para o usuário.');
+                return;
+            }
+
+            const accountId = accounts[0].id;
+            const response = await api.post('/operations/payment', { 
+                accountId: accountId,
+                value: parseFloat(valor),
+                description: descricao
+            });
+
+            console.log('Pagamento realizado:', response.data);
             setSuccess(`Pagamento de ${descricao} no valor de R$ ${valor} realizado com sucesso!`);
             setValor('');
+            setDescricao('');
+            
+            // Atualizar os dados da conta após um pequeno delay
+            setTimeout(async () => {
+                await refetch();
+            }, 1000);
         } catch (err) {
-            console.error(err.message);
-            setError('Não foi possível realizar o pagamento. Tente novamente.');
+            console.error('Erro no pagamento:', err);
+            if (err.response) {
+                setError(err.response.data.message || 'Erro no servidor. Tente novamente.');
+            } else {
+                setError('Não foi possível realizar o pagamento. Verifique sua conexão.');
+            }
         }
     };
 

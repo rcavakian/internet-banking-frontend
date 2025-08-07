@@ -1,18 +1,36 @@
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth, useUserAccounts } from "../../hooks/useAuth";
 import "./Dashboard.css";
 import carameloMascote from "../../assets/caramelo.png"
 
 export default function Dashboard() {
     const navigate = useNavigate();
+    const { user, logout } = useAuth();
+    const { accounts, loading } = useUserAccounts();
 
     const handleLogout = () => {
-        localStorage.removeItem("user_token");
+        logout();
         navigate("/login")
     };
 
-    // dados mockados
-    const userName = "Usuário";
-    const balance = 1250.75;
+    // Pegar a primeira conta do usuário (ou saldo total se houver múltiplas)
+    const balance = accounts.length > 0 ? accounts[0].balance || 0 : 0;
+    const userName = user?.name || user?.cpf || "Usuário";
+    const userAccount = accounts.length > 0 ? accounts[0] : null;
+
+    if (loading) {
+        return (
+            <div className="dashboard-page">
+                <header className="dashboard-navbar">
+                    <h1 className="navbar-title">Banco Caramelo</h1>
+                    <button onClick={handleLogout} className="logout-button">Sair</button>
+                </header>
+                <main className="dashboard-main-content">
+                    <p>Carregando...</p>
+                </main>
+            </div>
+        );
+    }
 
     return (
         <div className="dashboard-page">
@@ -25,6 +43,18 @@ export default function Dashboard() {
                     <div className="welcome-text">
                         <h2>Olá, {userName}!</h2>
                         <p>Que bom te ver por aqui. Pronto para organizar suas finanças?</p>
+                        {userAccount && (
+                            <div className="account-info">
+                                <div className="account-details">
+                                    <span className="account-label">Agência</span>
+                                    <span className="account-label">Conta Corrente</span>
+                                </div>
+                                <div className="account-numbers">
+                                    <span className="account-number">{userAccount.agency || '0001'}</span>
+                                    <span className="account-number">{userAccount.number}</span>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <img
                         src={carameloMascote}

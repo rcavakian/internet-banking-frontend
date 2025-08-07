@@ -1,21 +1,24 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import api from '../../services/api';
+import { useAuth, useUserAccounts } from '../../hooks/useAuth';
+import api from '../../services/api';
 import '../OperationPage.css';
 import ConfirmationModal from '../../components/ConfirmationModal';
 
 export default function Saque() {
     const [valor, setValor] = useState('');
+    const [descricao, setDescricao] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
+    const { logout } = useAuth();
+    const { accounts, refetch } = useUserAccounts();
 
     const handleLogout = () => {
-        localStorage.removeItem("user_token");
+        logout();
         navigate("/login")
     };
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
 
     const handleSaque = async (event) => {
@@ -33,15 +36,37 @@ export default function Saque() {
     }
 
     const handleConfirmSaque = async () => {
-        setIsModalOpen(false); // Fecha o modal
+        setIsModalOpen(false);
 
         try {
-            // await api.post('/operacoes/deposito', { valor });
+            if (accounts.length === 0) {
+                setError('Nenhuma conta encontrada para o usuário.');
+                return;
+            }
+
+            const accountId = accounts[0].id;
+            const response = await api.post('/operations/withdrawal', { 
+                accountId: accountId,
+                value: parseFloat(valor),
+                description: descricao || null
+            });
+
+            console.log('Saque realizado:', response.data);
             setSuccess(`Saque de R$ ${valor} realizado com sucesso!`);
             setValor('');
+            setDescricao('');
+            
+            // Atualizar os dados da conta após um pequeno delay
+            setTimeout(async () => {
+                await refetch();
+            }, 1000);
         } catch (err) {
-            console.error(err.message);
-            setError('Não foi possível realizar o saque. Tente novamente.');
+            console.error('Erro no saque:', err);
+            if (err.response) {
+                setError(err.response.data.message || 'Erro no servidor. Tente novamente.');
+            } else {
+                setError('Não foi possível realizar o saque. Verifique sua conexão.');
+            }
         }
     };
 
@@ -71,6 +96,16 @@ export default function Saque() {
                                 onChange={(e) => setValor(e.target.value)}
                             />
                         </div>
+                        <div className="input-group">
+                            <label htmlFor="descricao">Descrição (opcional)</label>
+                            <input
+                                type="text"
+                                id="descricao"
+                                placeholder="Ex: Saque emergencial, Retirada..."
+                                value={descricao}
+                                onChange={(e) => setDescricao(e.target.value)}
+                            />
+                        </div>
                         {error && <p className="error-message">{error}</p>}
                         {success && <p className="success-message">{success}</p>}
                         <button type="submit" className="operation-button">Confirmar Saque</button>
@@ -84,6 +119,7 @@ export default function Saque() {
                 title="Confirmar Saque"
             >
                 <p>Confirma o saque no valor de <strong>R$ {parseFloat(valor || 0).toFixed(2)}</strong>?</p>
+                {descricao && <p><strong>Descrição:</strong> {descricao}</p>}
             </ConfirmationModal>
         </div>
     );

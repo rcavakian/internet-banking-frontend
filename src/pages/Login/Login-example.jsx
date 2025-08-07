@@ -1,53 +1,53 @@
-import { useState } from "react"; // Importamos o useState
-import { useNavigate, Link } from 'react-router-dom'; // Para redirecionar o usuário
+import { useState } from "react";
+import { useNavigate, Link } from 'react-router-dom';
 import { IMaskInput } from 'react-imask';
-import api from "../../services/api"; // Para fazer a chamada à API
+import api from "../../services/api";
 import './Login.css';
 import carameloMascote from '../../assets/caramelo.png';
 
 export default function Login() {
-    // Estados para armazenar os dados do formulário
     const [cpf, setCpf] = useState('');
     const [password, setPassword] = useState('');
-    // Estado para armazenar mensagens de erro
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
-    // Função que será chamada quando o formulário for enviado
     const handleLogin = async (event) => {
-        event.preventDefault(); // Impede o recarregamento padrão da página
+        event.preventDefault();
+        setError('');
+        setLoading(true);
 
-        // Validação simples
         if (!cpf || !password) {
             setError('Por favor, preencha todos os campos.');
+            setLoading(false);
             return;
         }
 
         try {
-            // Remover pontos e traços do CPF
-            const cpfLimpo = cpf.replace(/\D/g, '');
-            
-            // Chamada para nossa API de login funcionando
+            // ✅ AQUI É ONDE O TOKEN É RECEBIDO
             const response = await api.post('/login', {
-                login: cpfLimpo,
+                login: cpf,
                 password: password
             });
 
-            // Se o login for bem-sucedido:
             console.log('Login bem-sucedido:', response.data);
 
-            // 1. Armazene o token de autenticação
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('user', JSON.stringify({ cpf: cpfLimpo }));
+            // ✅ SALVAR O TOKEN NO LOCALSTORAGE
+            localStorage.setItem('user_token', response.data.token);
 
-            // 2. Redirecione o usuário para o dashboard
+            // ✅ REDIRECIONAR PARA O DASHBOARD
             navigate('/dashboard');
 
         } catch (err) {
-            // Se a API retornar um erro (ex: 401 Unauthorized)
-            setError('Credenciais inválidas. Verifique seu CPF e senha.');
             console.error('Erro no login:', err);
+            if (err.response?.status === 401 || err.response?.status === 403) {
+                setError('CPF ou senha incorretos.');
+            } else {
+                setError('Erro no servidor. Tente novamente.');
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -58,6 +58,7 @@ export default function Login() {
                 <h1 className="branding-title">Banco Caramelo</h1>
                 <p className="branding-subtitle">Seu amigo para todas as horas</p>
             </div>
+            
             <div className="login-container">
                 <div className="login-form">
                     <h2>Acesse sua conta</h2>
@@ -70,9 +71,10 @@ export default function Login() {
                                 placeholder="insira seu CPF"
                                 value={cpf}
                                 onAccept={(value) => setCpf(value)}
-                            >
-                            </IMaskInput>
+                                disabled={loading}
+                            />
                         </div>
+                        
                         <div className="input-group">
                             <label htmlFor="password">Senha</label>
                             <input
@@ -81,19 +83,22 @@ export default function Login() {
                                 placeholder="insira sua senha"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                disabled={loading}
                             />
                         </div>
 
                         {error && <p className="error-message">{error}</p>}
 
-                        <button type="submit" className="login-button">Entrar</button>
+                        <button type="submit" className="login-button" disabled={loading}>
+                            {loading ? 'Entrando...' : 'Entrar'}
+                        </button>
                     </form>
+                    
                     <p className="signup-link">
                         Não tem uma conta? <Link to="/cadastro">Cadastre-se</Link>
                     </p>
                 </div>
             </div>
         </div>
-
     );
 }

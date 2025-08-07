@@ -1,21 +1,24 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import api from '../../services/api';
+import { useAuth, useUserAccounts } from '../../hooks/useAuth';
+import api from '../../services/api';
 import '../OperationPage.css';
 import ConfirmationModal from '../../components/ConfirmationModal';
 
 export default function Deposito() {
     const [valor, setValor] = useState('');
+    const [descricao, setDescricao] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
+    const { logout } = useAuth();
+    const { accounts, refetch } = useUserAccounts();
 
     const handleLogout = () => {
-        localStorage.removeItem("user_token");
+        logout();
         navigate("/login")
     };
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleDeposito = async (event) => {
         event.preventDefault();
@@ -41,15 +44,37 @@ export default function Deposito() {
     };
 
     const handleConfirmDeposito = async () => {
-        setIsModalOpen(false); // Fecha o modal
+        setIsModalOpen(false);
 
         try {
-            // await api.post('/operacoes/deposito', { valor });
+            if (accounts.length === 0) {
+                setError('Nenhuma conta encontrada para o usuário.');
+                return;
+            }
+
+            const accountId = accounts[0].id;
+            const response = await api.post('/operations/deposit', { 
+                accountId: accountId,
+                value: parseFloat(valor),
+                description: descricao || null
+            });
+
+            console.log('Depósito realizado:', response.data);
             setSuccess(`Depósito de R$ ${valor} realizado com sucesso!`);
             setValor('');
+            setDescricao('');
+            
+            // Atualizar os dados da conta após um pequeno delay
+            setTimeout(async () => {
+                await refetch();
+            }, 1000);
         } catch (err) {
-            console.error(err.message);
-            setError('Não foi possível realizar o depósito. Tente novamente.');
+            console.error('Erro no depósito:', err);
+            if (err.response) {
+                setError(err.response.data.message || 'Erro no servidor. Tente novamente.');
+            } else {
+                setError('Não foi possível realizar o depósito. Verifique sua conexão.');
+            }
         }
     };
     return (
@@ -79,6 +104,16 @@ export default function Deposito() {
                                 onChange={(e) => setValor(e.target.value)}
                             />
                         </div>
+                        <div className="input-group">
+                            <label htmlFor="descricao">Descrição (opcional)</label>
+                            <input
+                                type="text"
+                                id="descricao"
+                                placeholder="Ex: Depósito inicial, Transferência..."
+                                value={descricao}
+                                onChange={(e) => setDescricao(e.target.value)}
+                            />
+                        </div>
                         {error && <p className="error-message">{error}</p>}
                         {success && <p className="success-message">{success}</p>}
                         <button type="submit" className="operation-button">Confirmar Depósito</button>
@@ -91,7 +126,8 @@ export default function Deposito() {
                 onConfirm={handleConfirmDeposito}
                 title="Confirmar Depósito"
             >
-                <p>Confirma o pagamento no valor de <strong>R$ {parseFloat(valor || 0).toFixed(2)}</strong>?</p>
+                <p>Confirma o depósito no valor de <strong>R$ {parseFloat(valor || 0).toFixed(2)}</strong>?</p>
+                {descricao && <p><strong>Descrição:</strong> {descricao}</p>}
             </ConfirmationModal>
         </div>
     );

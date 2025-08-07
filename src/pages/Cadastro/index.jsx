@@ -1,7 +1,7 @@
 import { useState } from "react"; // Importamos o useState
 import { useNavigate, Link } from 'react-router-dom'; // Para redirecionar o usuário
 import { IMaskInput } from 'react-imask';
-import axios from 'axios'; // Para fazer a chamada à API
+import api from '../../services/api'; // Usar a API service configurada
 import './Cadastro.css';
 import carameloMascote from '../../assets/caramelo.png';
 
@@ -12,8 +12,9 @@ export default function Login() {
     const [cpf, setCpf] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    // Estado para armazenar mensagens de erro
+    // Estado para armazenar mensagens de erro e sucesso
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     const navigate = useNavigate();
 
@@ -27,30 +28,49 @@ export default function Login() {
             return;
         }
 
+        // Validação de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError('Por favor, insira um email válido.');
+            return;
+        }
+
+        // Validação de CPF (deve ter 11 dígitos)
+        const cpfLimpo = cpf.replace(/\D/g, '');
+        if (cpfLimpo.length !== 11) {
+            setError('Por favor, insira um CPF válido.');
+            return;
+        }
+
+        setError('');
+        setSuccess('');
+
         try {
-            // Aqui você faremos a chamada para a API
-            // Substitua 'http://localhost:8080/auth/login' pela URL real do seu endpoint de login
-            const response = await axios.post('http://localhost:8080/auth/login', {
-                // O backend pode esperar 'email' ou 'cpf', ajuste conforme necessário
+            // Chamada para o endpoint correto de cadastro de usuários
+            const response = await api.post('/users', {
                 name: name,
-                cpf: cpf,
+                cpf: cpfLimpo, // CPF já limpo
                 email: email,
-                senha: password
+                passwordHash: password
             });
 
-            // Se o login for bem-sucedido:
-            console.log('Login bem-sucedido:', response.data);
+            // Se o cadastro for bem-sucedido:
+            console.log('Cadastro bem-sucedido:', response.data);
+            setSuccess('Cadastro realizado com sucesso! Redirecionando para o login...');
 
-            // 1. Armazene o token de autenticação (geralmente em localStorage)
-            // localStorage.setItem('user_token', response.data.token);
-
-            // 2. Redirecione o usuário para o dashboard
-            navigate('/');
+            // Redirecionar para a página de login após 2 segundos
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
 
         } catch (err) {
-            // Se a API retornar um erro (ex: 401 Unauthorized)
-            setError('Credenciais inválidas. Verifique seu CPF e senha.');
-            console.error('Erro no login:', err);
+            // Se a API retornar um erro
+            console.error('Erro no cadastro:', err);
+            if (err.response?.data?.message) {
+                setError(err.response.data.message);
+            } else {
+                setError('Erro ao realizar cadastro. Verifique os dados e tente novamente.');
+            }
         }
     };
 
@@ -64,7 +84,7 @@ export default function Login() {
 
             <div className="cadastro-container">
                 <div className="cadastro-form">
-                    <h2>Acesse sua conta</h2>
+                    <h2>Criar sua conta</h2>
                     <form onSubmit={handleCadastro}>
                         <div className="input-group">
                             <label htmlFor="name">Nome</label>
@@ -109,7 +129,10 @@ export default function Login() {
                         </div>
 
                         {error && <p className="error-message">{error}</p>}
-                        <button type="submit" className="cadastro-button">Cadastrar</button>
+                        {success && <p className="success-message">{success}</p>}
+                        <button type="submit" className="cadastro-button" disabled={success}>
+                            {success ? 'Redirecionando...' : 'Cadastrar'}
+                        </button>
                         <p className="login-link">
                             Já tem uma conta? <Link to="/login">Faça o login</Link>
                         </p>
